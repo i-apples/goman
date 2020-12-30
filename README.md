@@ -104,7 +104,7 @@ JSON编辑器使用了 [brace](https://www.npmjs.com/package/brace)
 
 # 更新日志
 
-2018-02-09 v0.4.0
+2020-12-30 v0.4.0
 
 * JSON编辑器
 * 新增一键配置请求头
