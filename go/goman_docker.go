@@ -5,7 +5,7 @@ package goman
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-	"github.com/zaaksam/goman/go/config"
+	"github.com/i-apples/goman/go/config"
 )
 
 func run(mode string) {

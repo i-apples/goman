@@ -5,9 +5,9 @@ import (
 
 	"github.com/astaxie/beego"
 	// _ "github.com/mattn/go-sqlite3"
-	"github.com/zaaksam/goman/go/config"
-	// _ "github.com/zaaksam/goman/go/db"
-	_ "github.com/zaaksam/goman/go/routers"
+	"github.com/i-apples/goman/go/config"
+	// _ "github.com/i-apples/goman/go/db"
+	_ "github.com/i-apples/goman/go/routers"
 )
 
 // Run 运行goman

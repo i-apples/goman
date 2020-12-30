@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/zaaksam/goman/go/model"
+	"github.com/i-apples/goman/go/model"
 )
 
 // Req Http请求对象

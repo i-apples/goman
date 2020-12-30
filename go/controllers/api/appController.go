@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/zaaksam/goman/go/services"
+	"github.com/i-apples/goman/go/services"
 )
 
 type AppController struct {

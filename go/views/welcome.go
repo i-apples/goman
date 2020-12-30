@@ -14,7 +14,6 @@ const Welcome = `<!DOCTYPE html>
             <div data-bind="text: title" class="layui-logo"></div>
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item"><a data-bind="click: onGithub" href="javascript:;">Github</a></li>
-                <li class="layui-nav-item"><a data-bind="click: onGitee" href="javascript:;">Gitee</a></li>
                 <li class="layui-nav-item"><a data-bind="click: onClose" href="javascript:;">退出</a></li>
             </ul>
         </div>

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/logs"
-	// "github.com/zaaksam/goman/go/db"
+	// "github.com/i-apples/goman/go/db"
 )
 
 // Info 普通级别日志

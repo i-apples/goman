@@ -9,8 +9,8 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-	"github.com/zaaksam/goman/go/config"
-	"github.com/zaaksam/goman/go/services"
+	"github.com/i-apples/goman/go/config"
+	"github.com/i-apples/goman/go/services"
 	"github.com/zserge/webview"
 )
 
@@ -57,7 +57,7 @@ func run(mode string) {
 			case "open":
 				openBrowser(url)
 			case "github":
-				openBrowser("https://github.com/zaaksam/goman")
+				openBrowser("https://github.com/i-apples/goman")
 			case "gitee":
 				openBrowser("https://gitee.com/zaaksam/goman")
 			case "close":

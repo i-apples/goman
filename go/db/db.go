@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
-	"github.com/zaaksam/goman/go/model"
+	"github.com/i-apples/goman/go/model"
 )
 
 type IModel interface {

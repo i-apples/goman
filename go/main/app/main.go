@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/zaaksam/goman/go"
+	"github.com/i-apples/goman/go"
 )
 
 func main() {

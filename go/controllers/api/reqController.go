@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/zaaksam/goman/go/model"
-	"github.com/zaaksam/goman/go/services"
+	"github.com/i-apples/goman/go/model"
+	"github.com/i-apples/goman/go/services"
 )
 
 type ReqController struct {

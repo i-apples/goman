@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/zaaksam/goman/go/config"
-	"github.com/zaaksam/goman/go/views"
+	"github.com/i-apples/goman/go/config"
+	"github.com/i-apples/goman/go/views"
 )
 
 // WebController 网页控制器
@@ -47,7 +47,8 @@ func (c *WebController) formatHTML(body string) string {
 		unix = time.Now().Unix()
 
 		if config.AppConf.OS == config.OS_TYPE_WINDOWS {
-			windowsDebug = `<script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script>`
+			// <script type="text/javascript" src="https://cdn.bootcdn.net/ajax/libs/firebug-lite/1.4.0/firebug-lite.min.js"></script>
+			windowsDebug = ``
 		}
 	} else {
 		unix = config.AppConf.Started
