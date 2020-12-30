@@ -8,9 +8,9 @@ function deleteDir(dir) {
         files = fs.readdirSync(dir);
         files.forEach(function (file, index) {
             var curDir = dir + "/" + file;
-            if (fs.statSync(curDir).isDirectory()) { // recurse  
+            if (fs.statSync(curDir).isDirectory()) { // recurse
                 deleteJS(curDir);
-            } else { // delete file  
+            } else { // delete file
                 fs.unlinkSync(curDir);
             }
         });

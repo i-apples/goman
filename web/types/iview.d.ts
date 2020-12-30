@@ -1,9 +1,10 @@
-import Vue, { VNode } from 'vue'
+import Vue, {VNode} from 'vue'
 
 declare module "vue/types/vue" {
     interface Vue {
         $Modal: iv.Modal
         $Message: iv.Message
+        $Spin: iv.Spin
     }
 }
 
@@ -45,5 +46,11 @@ declare namespace iv {
         duration?: number
         onClose?: () => void
         closable?: boolean
+        render?: (h: any) => void
+    }
+
+    interface Spin {
+        show: (config?: any) => void
+        hide: () => void
     }
 }

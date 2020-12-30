@@ -63,6 +63,10 @@
     background-color: #f8f8f9;
     color: inherit;
 }
+.ivu-input {
+    font-size: 14px;
+    font-weight: bold;
+}
 </style>
 
 <script lang="ts">

@@ -7,7 +7,7 @@
             <!-- <Avatar icon="person" size="small" /> -->
             <ButtonGroup>
                 <Button icon="social-github" @click="onGithub"></Button>
-                <Button @click="onGitee">码</Button>
+<!--                <Button @click="onGitee">码</Button>-->
                 <Button @click="onLanguage">{{language}}</Button>
                 <Button v-if="isAppMode" icon="refresh" @click="onRefresh"></Button>
             </ButtonGroup>
@@ -61,7 +61,7 @@ export default class Top extends Vue {
     }
 
     onGithub() {
-        window.open('https://github.com/zaaksam/goman')
+        window.open('https://github.com/i-apples/goman')
     }
 
     onGitee() {

@@ -141,7 +141,7 @@ export default class List extends Vue {
         this.onContentTypeChange()
 
         if (this.isHeaders) {
-            this.keyOptions = ['Content-Type', 'User-Agent']
+            this.keyOptions = ['Content-Type', 'User-Agent', 'Cookie', 'authorization']
             this.valueOptions = [
                 'text/plain',
                 'text/html',
@@ -200,7 +200,8 @@ export default class List extends Vue {
                         .toString(),
                 key: 'Content-Type',
                 value: this.contentType,
-                desc: ''
+                desc: '',
+                checked:true
             })
         }
 
@@ -212,17 +213,18 @@ export default class List extends Vue {
     }
 
     onSelect(selection: Req.ListModel[]) {
-        _.forEach(this.listData, p => {
-            p.isDisable = true
 
-            let s = _.find(selection, function(s) {
-                return p.id === s.id
+        _.forEach(this.tableData, p => {
+            _.forEach(selection, _p => {
+                if(p.id === _p.id) {
+                    p.isDisable = !p._checked
+                } else {
+                    p.isDisable = true
+                }
             })
-            if (s) {
-                p.isDisable = false
-            }
         })
-        this.$emit('onChange')
+        this.$emit('update:selectChange',selection)
+        // this.$emit('onChange')
     }
 
     onAdd() {
@@ -235,7 +237,8 @@ export default class List extends Vue {
                     .toString(),
             key: '',
             value: '',
-            desc: ''
+            desc: '',
+            checked: true
         })
         this.$emit('onChange')
 
@@ -285,7 +288,7 @@ export default class List extends Vue {
                 value: n.value,
                 desc: n.desc,
                 id: n.id,
-                _checked: !n.isDisable
+                _checked: n.checked
             }
         })
     }

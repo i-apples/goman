@@ -80,4 +80,5 @@ export default class App extends Vue {
         }, 1000)
     }
 }
+
 </script>

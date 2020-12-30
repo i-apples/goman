@@ -104,7 +104,8 @@ const Polyfill = function () {
     if (win.HTMLElement && Object.getOwnPropertyNames(HTMLElement.prototype).indexOf('dataset') === -1) {
         Object.defineProperty(HTMLElement.prototype, 'dataset', {
             get: function () {
-                var attributes = this.attributes;
+                var _this:any = this
+                var attributes = _this.attributes;
                 var name = [],
                     value = [];
                 var obj = {};

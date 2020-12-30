@@ -20,7 +20,7 @@
                 </Row>
             </Form-item>
             <Form-item v-show="showParams">
-                <ReqList :listData="params" :isSending="isSending" @onChange="onParamsChange"></ReqList>
+                <ReqList :listData="params" :isSending="isSending" @onChange="onParamsChange" :selectChange.sync="selected"></ReqList>
             </Form-item>
             <Form-item v-show="isAdvanced">
                 <Card style="width:100%;">
@@ -55,7 +55,10 @@
                                     </Select>
                                 </div>
                                 <ReqList v-show="!isBodyRaw" :listData="bodys" :isSending="isSending"></ReqList>
-                                <Input v-show="isBodyRaw" v-model="body" type="textarea" :rows="10"></Input>
+<!--                                <Input v-show="isBodyRaw" v-model="body" type="textarea" :rows="10"></Input>-->
+                                <div class="em-editor__editor" v-show="isBodyRaw">
+                                    <div ref="codeEditor" id="codeEditor"></div>
+                                </div>
                             </Tab-pane>
                             <Tab-pane :label="headersLabel" name="Headers">
                                 <ReqList :listData="headers" :isSending="isSending" :isHeaders="true" :contentType="contentType"></ReqList>
@@ -85,6 +88,15 @@
     overflow: auto;
     overflow-y: hidden;
 }
+.em-editor__editor {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.em-editor__editor > div {
+    height:500px;
+}
 </style>
 
 <script lang="ts">
@@ -96,6 +108,16 @@ import ReqList from './list.vue'
 import ReqPre from './pre.vue'
 import ReqReport from './report.vue'
 import { CreateElement } from 'vue/types/vue'
+import jsBeautify from 'js-beautify/js/lib/beautify'
+import * as ace from 'brace';
+import {arr2Obj, array2Obj, splitParams, checkLangJava, queryParams} from '../utils/index'
+import 'brace/mode/javascript';
+import 'brace/theme/monokai';
+import 'brace/ext/language_tools'
+import 'brace/ext/searchbox'
+import {Editor} from "brace";
+import hotkeys from 'hotkeys-js';
+
 
 interface IOptions {
     label: string
@@ -118,7 +140,7 @@ export default class Tab extends Vue {
     previewType = 'primary'
     isPreview = true
     isSending = false
-    reqMode: 'Body' | 'Headers' | 'Code' = 'Headers'
+    reqMode: 'Body' | 'Headers' | 'Code' = 'Body'
     contentType = ''
     headers: Req.ListModel[] = [
         {
@@ -126,13 +148,30 @@ export default class Tab extends Vue {
             id: 'ls0',
             key: 'User-Agent',
             value: C.userAgent,
-            desc: ''
+            desc: '',
+            checked:true
+        },
+        {
+            isDisable: false,
+            id: 'ls1',
+            key: 'Cookie',
+            value: '',
+            desc: '',
+            checked:true
+        },
+        {
+            isDisable: false,
+            id: 'ls2',
+            key: 'authorization',
+            value: '',
+            desc: '',
+            checked:true
         }
     ]
     params: Req.ListModel[] = []
     bodys: Req.ListModel[] = []
-    body: string = ''
-    bodyMode: 'normal' | 'raw' = 'normal'
+    body: string = '{"data": {}}'
+    bodyMode: 'normal' | 'raw' = 'raw'
 
     reqN: number = 10
     reqC: number = 10
@@ -142,7 +181,7 @@ export default class Tab extends Vue {
         n: 0,
         c: 0,
         timeout: 0,
-        method: 'GET',
+        method: 'POST',
         url: '',
         headers: {},
         body: ''
@@ -152,8 +191,11 @@ export default class Tab extends Vue {
     resList: Req.ResponseModel[] = []
 
     methodOptions: string[] = ['GET', 'POST', 'HEAD', 'PUT', 'DELETE']
-    rawContentType: string = 'text'
+    rawContentType: string = 'application/json'
     showParams: boolean = true
+    codeEditor: any = null
+    selected: Array<object> = []
+    rollBack: Array<any> = []
 
     created() {
         this.onLocale()
@@ -164,11 +206,89 @@ export default class Tab extends Vue {
         this.onTabLabelChange()
     }
 
+    @Watch('selected')
+    selectChange(newVal: Array<object>, oldVal: Array<object>) {
+        const {url} = this.req
+        const index = url.indexOf('?')
+
+        if (newVal.length) {
+          const newObj = arr2Obj(newVal, {setKey: 'key', setValue: 'value'})
+
+            const replaceStr = url.substring(0, index)
+            this.req.url = index >= 0 ? replaceStr + queryParams(newObj, 0) : url + queryParams(newObj, 0)
+        } else if (index >= 0) {
+            this.req.url = url.substring(0, index)
+        } else {
+
+        }
+    }
+
     mounted() {
-        setTimeout(() => {
+        const el:any = this.$refs.codeEditor
+        this.codeEditor = ace.edit(el)
+        this.codeEditor.getSession().setMode('ace/mode/javascript')
+        this.codeEditor.setTheme('ace/theme/monokai')
+        this.codeEditor.setOption('tabSize', 2)
+        this.codeEditor.setOption('fontSize', 15)
+        this.codeEditor.setOption('enableLiveAutocompletion', true)
+        // this.codeEditor.setOption('enableSnippets', true)
+        this.codeEditor.clearSelection()
+        this.codeEditor.getSession().setUseWorker(false)
+        this.codeEditor.on('change', this.onChange)
+        this.codeEditor.commands.addCommands([{
+          name: 'format',
+          bindKey: {win: 'Ctrl-Shift-F', mac: 'Ctrl-Shift-F'},
+          exec: () => {
+            this.format()
+          }
+        }, {
+          name: 'mockData',
+          bindKey: {win: 'Ctrl-Shift-M', mac: 'Ctrl-Shift-C'},
+          exec: (codeEditor: any) => {
+            const txt: string = codeEditor.getValue()
+
+            try {
+              this.codeEditor.setValue(jsBeautify.js_beautify(JSON.stringify(array2Obj(checkLangJava(txt))), {indent_size: 2}))
+            } catch (e) {
+              const title = '转换错误：' + e
+              this.$Modal.warning({title})
+            }
+          }
+        }])
+
+        hotkeys('ctrl+shift+s', async (event: any, handler: any) => {
+          event.preventDefault();
+          this.setCopyData(this.reqMode)
+        })
+
+        hotkeys('ctrl+shift+z', async (event: any, handler: any) => {
+          event.preventDefault();
+          this.handleRollBack()
+        })
+
+        hotkeys('ctrl+s', (event: any, handler: any) => {
+          event.preventDefault()
+          this.onSend()
+        });
+
+      this.$nextTick(() => {
             this.isAdvanced = false
             this.onParamsShow()
-        }, 1)
+            this.codeEditor.setValue(this.body)
+            this.format()
+        })
+    }
+
+    format () {
+        const context = this.codeEditor.getValue()
+        let code = /^http(s)?/.test(context)
+            ? context
+            : jsBeautify.js_beautify(context, { indent_size: 2 })
+        this.codeEditor.setValue(code)
+    }
+
+    onChange () {
+        this.body = this.codeEditor.getValue()
     }
 
     onPreview() {
@@ -199,6 +319,7 @@ export default class Tab extends Vue {
 
         let pmStr = ''
         _.forEach(this.params, (pm, k) => {
+            console.log(pm)
             if (pm.isDisable) {
                 return
             }
@@ -262,7 +383,8 @@ export default class Tab extends Vue {
                         .toString(),
                 key: key,
                 value: value,
-                desc: ''
+                desc: '',
+                checked:true
             })
         })
 
@@ -438,6 +560,152 @@ export default class Tab extends Vue {
         }
 
         return code
+    }
+
+    async setCopyData(type: string) {
+      const navigator: any = window.navigator
+      const copyTxt = await navigator.clipboard.readText()
+      let target: string = ''
+      let handle: Req.ListModel[] = []
+      let headers: Req.ListModel[] = this.headers
+
+      this.$Spin.show();
+
+      switch (type) {
+        case "Body":
+          const isBodyRaw = this.isBodyRaw
+
+          if (isBodyRaw) {
+            try {
+              this.codeEditor.setValue(jsBeautify.js_beautify(copyTxt, {indent_size: 2}))
+            } catch (e) {
+              this.$Spin.hide()
+              alert('失败')
+              return
+            }
+          } else {
+            try {
+              console.info('解析Json对象')
+
+              const txt2Obj = JSON.parse(JSON.parse(JSON.stringify(copyTxt)))
+              let forIndex: number = 0
+
+              _.forIn(txt2Obj, function (value, key) {
+
+                if (value && value.constructor == String) {
+                  forIndex += 1
+                  handle.push({
+                    desc: "",
+                    id: 'ls' +
+                        moment() + forIndex
+                            .valueOf()
+                            .toString(),
+                    isDisable: false,
+                    checked: true,
+                    key,
+                    value
+                  })
+                }
+              })
+
+            } catch (e) {
+              handle = splitParams(copyTxt).map((e: any, i: number) => {
+                const {key, value} = e
+
+                e = {
+                  desc: "",
+                  id: 'ls' +
+                      moment() + i
+                          .valueOf()
+                          .toString(),
+                  isDisable: false,
+                  checked: true,
+                  key,
+                  value
+                }
+
+                return e
+              })
+            }
+          }
+
+          target = 'bodys'
+          break;
+        case "Headers":
+          const copyHeaders = splitParams(await copyTxt).map((e: any, index: number) => {
+            const {key, value} = e
+            e = {
+              desc: "",
+              id: 'ls' +
+                  moment() + index
+                      .valueOf()
+                      .toString(),
+              isDisable: false,
+              checked: true,
+              key,
+              value
+            }
+            return e
+          })
+
+          if (!copyHeaders.length) {
+            this.$Spin.hide()
+            this.$Message.error({content: '复制请求头失败'})
+            return
+          }
+
+          handle = _.orderBy(_.unionBy(copyHeaders, headers, 'key'), ['id'], ['asc'])
+
+          target = 'headers'
+          break;
+        default:
+          break;
+      }
+
+      this.rollBack.push({
+        target: target.toString(),
+        handle: JSON.parse(JSON.stringify(this[target]))
+      })
+
+      this[target] = handle
+      const clearCodeTime: number = 7
+
+      this.$Spin.hide()
+      this.$Message.success({
+        duration: 10,
+        render: h => {
+          return h('span', [
+            h('span', `操作成功！你仍然可在${clearCodeTime}秒内点击`),
+            h('a', {
+              style: {'color': 'red'},
+              domProps: {
+                innerHTML: '撤回',
+              },
+              on: {
+                click: () => {
+                  this.handleRollBack()
+                }
+              },
+            }),
+            ' 按钮'
+          ])
+        }
+      });
+    }
+
+    handleRollBack() {
+      const rollbackList = this['rollBack']
+
+      console.info(rollbackList)
+
+      if (!rollbackList.length) {
+        this.$Message.error({content: '暂时没有可撤回的内容'})
+        return
+      }
+
+      const {target, handle} = _.last(rollbackList)
+      this[target] = handle
+      this['rollBack'].pop()
     }
 }
 </script>

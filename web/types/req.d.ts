@@ -11,6 +11,7 @@ declare namespace Req {
         key: string
         value: string
         desc: string
+        checked: Boolean
     }
 
     interface RequestModel {
