@@ -1,24 +1,68 @@
 # goman
 
-A web app like postman
+> goman的升级版本，JAVA调式神器, 新增了些有意思实用的功能 (#^.^#)。提升开发效率
+
+api请求测试，接口模拟请求调试工具, 绿色版客户端，无需额外环境 5秒启动
+
+原项目在 [这里](https://github.com/zaaksam/goman) （感谢作者）
+
+# 新版功能亮点
+web版，支持一键配置请求头、formdata格式数据。具体操作如下：
+
+### 一键配置请求头/formdata参数
+
+1. 复制请求头参数
+   ![](https://s3.ax1x.com/2020/12/30/rL5nDx.png)
+2. 打开goman切换到Headers选项卡
+   ![](https://s3.ax1x.com/2020/12/30/rL5MVK.png)
+3. 使用 CTRL+SHIFT+S 一键配置copy的数据至headers（第一次使用需要允许相应的权限）
+   ![](https://s3.ax1x.com/2020/12/30/rL5mK1.png)
+4. 配置成功后~可以点击 撤回 按钮撤销本地更改的数据
+   ![](https://s3.ax1x.com/2020/12/30/rL5mK1.png)
+5. 配置body的formdata操作和上述雷同(暂不支持文件上传)
+
+### 一键模拟JAVA实体类字段
+
+1. 复制JAVA实体类代码
+   ![](https://s3.ax1x.com/2020/12/30/rLqtfK.png)
+2. 打开goman切换到Body选项卡，选择Raw-JSON
+   ![](https://s3.ax1x.com/2020/12/30/rL7JFf.png)
+3. 使用 CTRL+SHIFT+M 一键模拟实体类转JSON
+   ![](https://s3.ax1x.com/2020/12/30/rL7JFf.png)
+4. 成功JSON格式数据并随机模拟值（第一次使用需要允许相应的权限）
+   ![](https://s3.ax1x.com/2020/12/30/rLHi9S.png)
+
+- ps 支持的实体类字段修饰符为 public、private。且仅支持 String、Long、Integer、Double、BigDecimal、Boolean、Date、Object 等基本类型模拟，暂不支持泛型。
+
+## 现有问题
+
+- 一键配置请求头功能使用了clipboard.readText（），可能对某些浏览器暂未支持。兼容性参考 [这里](https://developer.mozilla.org/zh-CN/docs/Web/API/Navigator/clipboard) 建议使用Chrome浏览器
+- 一键模拟JAVA to JSON 功能如果出现转换异常，请确保修饰符、定义的类型、定义的变量名之间为一个空格！建议先用编辑器先格式化JAVA代码然后复制到goman转换
+
+```java
+    private   String   searchValue;  // 解析失败
+    private Date createTime; //解析成功
+```
 
 # 已发布平台(go1.9.x编译)
 
 web版，可以使用chrome等浏览器，拥有更好的体验
 
- * [goman.v0.3.1.web-win.zip 5.6MB](https://github.com/zaaksam/goman/releases/download/v0.3.1/goman.v0.3.1.web-win.zip)
+* [goman.v0.4.0.web-win.zip 5.6MB (码云源)](https://gitee.com/zaaksam/goman/attach_files/download?i=118490&u=http%3A%2F%2Ffiles.git.oschina.net%2Fgroup1%2FM00%2F02%2FEC%2FPaAvDFp9iZKAHvm2AFTbbtJOODU736.zip%3Ftoken%3D822e526d3d00d61d831e6936f529d229%26ts%3D1518178278%26attname%3Dgoman.v0.3.1.web-win.zip)
 
- * [goman.v0.3.1.web-mac.tar.gz 6.3MB](https://github.com/zaaksam/goman/releases/download/v0.3.1/goman.v0.3.1.web-mac.tar.gz)
+* [goman.v0.4.0.web-mac.tar.gz 6.3MB (码云源)](https://gitee.com/zaaksam/goman/attach_files/download?i=118488&u=http%3A%2F%2Ffiles.git.oschina.net%2Fgroup1%2FM00%2F02%2FEC%2FPaAvDFp9iViAXR8bAGBUYVeP_KU9498.gz%3Ftoken%3Df6573982e125cf28a7e290649818f681%26ts%3D1518178278%26attname%3Dgoman.v0.3.1.web-mac.tar.gz)
 
 app版，独立运行，更简洁，但有些限制
 
-* [goman.v0.3.1.app-win.zip 5.6MB](https://github.com/zaaksam/goman/releases/download/v0.3.1/goman.v0.3.1.app-win.zip) (只兼容IE10/IE11内核，请注意升级系统IE浏览器)
+* [goman.v0.4.0.app-win.zip 5.6MB (码云源)](https://gitee.com/zaaksam/goman/attach_files/download?i=118489&u=http%3A%2F%2Ffiles.git.oschina.net%2Fgroup1%2FM00%2F02%2FEC%2FPaAvDFp9iXWAXIDEAFTbaAOyE3Q426.zip%3Ftoken%3Dba1ea69e48a52ca5758cfae63dc173e0%26ts%3D1518178278%26attname%3Dgoman.v0.3.1.app-win.zip) (
+  只兼容IE10/IE11内核，请注意升级系统IE浏览器)
 
-* [goman.v0.3.1.app-mac.tar.gz 6.3MB](https://github.com/zaaksam/goman/releases/download/v0.3.1/goman.v0.3.1.app-mac.tar.gz) (已知问题：无法使用复制/粘贴快捷键，但可使用鼠标右键操作)
+* [goman.v0.4.0.app-mac.tar.gz 6.3MB (码云源)](https://gitee.com/zaaksam/goman/attach_files/download?i=118487&u=http%3A%2F%2Ffiles.git.oschina.net%2Fgroup1%2FM00%2F02%2FEC%2FPaAvDFp9iTyAHI4wAGBVuIHKabg0398.gz%3Ftoken%3D3cbf01e6f4af228fbaa9531fea5a8fe0%26ts%3D1518178278%26attname%3Dgoman.v0.3.1.app-mac.tar.gz) (
+  已知问题：无法使用复制/粘贴快捷键，但可使用鼠标右键操作)
 
-docker版，更简单的尝鲜使用
+docker版，更简单的尝鲜使用（docker版本为 v0.3.1）
 
-* `docker pull zaaksam/goman` 或者指定版本 `docker pull zaaksam/goman:0.3.1`
+* `docker pull zaaksam/goman` 或者指定版本 `docker pull zaaksam/goman:v0.3.1`
 
 * `docker run -p 8080:8080 zaaksam/goman`
 
@@ -28,7 +72,7 @@ docker版，更简单的尝鲜使用
 
 # 界面预览
 
-0.3.1版界面相对0.3.0基本没有变化
+0.4.0版界面相对0.3.1 新增 请求富文本框替换为JSON编辑器，更友好的支持JSON输入、提示、格式化JSON数据等等
 
 windows web版
 
@@ -54,9 +98,20 @@ web版引导界面使用了 [Knockout](http://knockoutjs.com/) + [layui样式](
 
 GUI使用了 https://github.com/zserge/webview
 
+JSON编辑器使用了 [brace](https://www.npmjs.com/package/brace)
+
 请求耗时统计部份参考了 https://github.com/rakyll/hey 代码
 
 # 更新日志
+
+2018-02-09 v0.4.0
+
+* JSON编辑器
+* 新增一键配置请求头
+* 新增一键配置formdata
+* 解决了 GET params 不勾选但还传参的bug
+* 取消随机端口。启动app指定端口（默认4399）被占用时，自动寻找可用端口
+* 优化打包配置脚本（win环境）
 
 2018-02-09 v0.3.1
 
